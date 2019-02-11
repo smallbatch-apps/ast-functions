@@ -1,6 +1,6 @@
 {
   "name": "ast-functions",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Split apart an AST to extract contents",
   "main": "index.js",
   "scripts": {
