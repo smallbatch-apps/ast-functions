@@ -49,10 +49,12 @@ const mapParameters = parameters => {
 const loadEnums = ({nodes}) => {
   return nodes[nodes.length-1].nodes
     .filter(({nodeType}) => nodeType === 'EnumDefinition')
-    .reduce((events, {name, parameters = []}) => {
-      parameters = mapParameters(parameters.parameters);
-      events[name] = { name, parameters };
-      return events;
+    .reduce((enums, {name, members = []}) => {
+      enums[name] = members.reduce((memberObject, member, index) => {
+        memberObject[index] = member.name;
+        return memberObject;
+      }, {});
+      return enums;
     }, {});
 }
 
@@ -66,19 +68,13 @@ const loadEvents = ({nodes}) => {
     }, {});
 };
 
-const loadAll = ast => {
-  if(ast === undefined) {
-    console.warn('Truffle output has already been compressed');
-    return false;
-  }
-  return {
-    events: loadEvents(ast),
-    structs: loadStructs(ast),
-    enums: loadEnums(ast),
-    constructor: loadConstructor(ast),
-    interface: loadInterface(ast)
-  }
-};
+const loadAll = ast => ({
+  events: loadEvents(ast),
+  structs: loadStructs(ast),
+  enums: loadEnums(ast),
+  constructor: loadConstructor(ast),
+  interface: loadInterface(ast)
+});
 
 module.exports = {
   loadConstructor,
